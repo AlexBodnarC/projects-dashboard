@@ -1,0 +1,52 @@
+{
+  "projects": [
+    {
+      "id": "project_a",
+      "name": "Project A",
+      "startDate": "2025-01-01",
+      "endDate": "2025-12-31",
+      "manager": "John Doe",
+      "favourite": true
+    },
+    {
+      "id": "project_b",
+      "name": "Project B",
+      "startDate": "2025-01-02",
+      "endDate": "2025-12-31",
+      "manager": "John Doe",
+      "favourite": true
+    },
+    {
+      "id": "project_c",
+      "name": "Project C",
+      "startDate": "2025-01-01",
+      "endDate": "2025-12-31",
+      "manager": "John Doe",
+      "favourite": false
+    },
+    {
+      "id": "project_d",
+      "name": "Project D",
+      "startDate": "2025-01-01",
+      "endDate": "2025-12-31",
+      "manager": "John Doe",
+      "favourite": false
+    },
+    {
+      "id": "project_e",
+      "name": "Project E",
+      "startDate": "2025-01-01",
+      "endDate": "2025-12-31",
+      "manager": "John Doe",
+      "favourite": false
+    },
+    {
+      "id": "project_f",
+      "name": "Project F",
+      "startDate": "2025-01-01",
+      "endDate": "2026-01-16",
+      "manager": "John Doe",
+      "favourite": false
+    }
+  ]
+}
