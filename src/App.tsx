@@ -11,6 +11,7 @@ import { ProjectCreatePage } from "./pages/ProjectCreatePage";
 import GlobalStyles from "./styles/GlobalStyles";
 import AppLayout from "./ui/AppLayout";
 import { FavouritesProvider } from "./context/FavouritesContext";
+import { ProjectDetailPage } from "./pages/ProjectDetailPage";
 
 const App: React.FC = () => {
   return (
@@ -22,6 +23,10 @@ const App: React.FC = () => {
             <Route path="/" element={<Navigate to="/projects" replace />} />
             <Route path="/projects" element={<ProjectListPage />} />
             <Route path="/projects/new" element={<ProjectCreatePage />} />
+            <Route
+              path="/projects/:projectId"
+              element={<ProjectDetailPage />}
+            />
             <Route
               path="/projects/:projectId/edit"
               element={<ProjectEditPage />}
