@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useFavourites } from "../context/FavouritesContext";
 import { Dot } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const StyledSidebar = styled.aside<{ isOpen: boolean }>`
   background: #f9f9f9;
@@ -55,7 +56,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       <FavoriteList>
         {favourites.length > 0 ? (
           favourites.map((project: any) => (
-            <li
+            <Link
+              to={`/projects/${project.id}`}
               key={project.id}
               style={{
                 display: "flex",
@@ -65,7 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
             >
               <Dot size={24} style={{ marginRight: "0.5rem" }} />
               {project.name}
-            </li>
+            </Link>
           ))
         ) : (
           <p style={{ marginTop: "1rem" }}>No favorite projects</p>

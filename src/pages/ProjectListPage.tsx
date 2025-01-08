@@ -10,10 +10,12 @@ import {
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useFavourites } from "../context/FavouritesContext";
-import { Favorite, FavoriteBorder, Delete } from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import { DeleteConfirmationDialog } from "../ui/DeleteConfirmationDialog";
 import { Notification } from "../ui/Notification";
+import { Link } from "react-router-dom";
+import { FavouriteToggle } from "../ui/FavouriteToggle";
 
 interface Project {
   id: string;
@@ -130,7 +132,18 @@ export const ProjectListPage: React.FC = () => {
         <TableBody>
           {projects.map((project) => (
             <TableRow key={project.id}>
-              <TableCell>{project.id}</TableCell>
+              <TableCell>
+                <Link
+                  to={`/projects/${project.id}`}
+                  style={{
+                    textDecoration: "none",
+                    color: "blue",
+                    cursor: "pointer",
+                  }}
+                >
+                  {project.id}
+                </Link>
+              </TableCell>
               <TableCell>{project.name}</TableCell>
               <TableCell>{project.startDate}</TableCell>
               <TableCell>{project.endDate}</TableCell>
@@ -144,12 +157,12 @@ export const ProjectListPage: React.FC = () => {
                   <Delete />
                 </IconButton>
 
-                <IconButton
-                  color={project.favourite ? "error" : "default"}
-                  onClick={() => toggleFavourite(project.id, project.favourite)}
-                >
-                  {project.favourite ? <Favorite /> : <FavoriteBorder />}
-                </IconButton>
+                <FavouriteToggle
+                  isFavourite={project.favourite}
+                  onToggle={() =>
+                    toggleFavourite(project.id, project.favourite)
+                  }
+                />
                 <Button
                   variant="contained"
                   color="primary"
