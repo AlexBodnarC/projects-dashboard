@@ -1,7 +1,13 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import { ProjectListPage } from "./pages/ProjectListPage";
-import { ProjectDetailPage } from "./pages/ProjectDetailPage";
+import { ProjectEditPage } from "./pages/ProjectEditlPage";
+import { ProjectCreatePage } from "./pages/ProjectCreatePage";
 import GlobalStyles from "./styles/GlobalStyles";
 import AppLayout from "./ui/AppLayout";
 import { FavouritesProvider } from "./context/FavouritesContext";
@@ -13,10 +19,12 @@ const App: React.FC = () => {
       <Router>
         <Routes>
           <Route element={<AppLayout />}>
-            <Route path="/" element={<ProjectListPage />} />
+            <Route path="/" element={<Navigate to="/projects" replace />} />
+            <Route path="/projects" element={<ProjectListPage />} />
+            <Route path="/projects/new" element={<ProjectCreatePage />} />
             <Route
-              path="/projects/:projectId"
-              element={<ProjectDetailPage />}
+              path="/projects/:projectId/edit"
+              element={<ProjectEditPage />}
             />
           </Route>
         </Routes>

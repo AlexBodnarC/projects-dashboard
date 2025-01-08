@@ -6,12 +6,14 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Snackbar,
-  Alert,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useFavourites } from "../context/FavouritesContext";
+import { Favorite, FavoriteBorder, Delete } from "@mui/icons-material";
+import { IconButton } from "@mui/material";
+import { DeleteConfirmationDialog } from "../ui/DeleteConfirmationDialog";
+import { Notification } from "../ui/Notification";
 
 interface Project {
   id: string;
@@ -27,6 +29,8 @@ export const ProjectListPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const navigate = useNavigate();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
   const { toggleFavouritesUpdated } = useFavourites();
 
   useEffect(() => {
@@ -43,6 +47,30 @@ export const ProjectListPage: React.FC = () => {
     fetchProjects();
   }, []);
 
+  const openDialog = (id: string) => {
+    setProjectToDelete(id);
+    setIsDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setProjectToDelete(null);
+    setIsDialogOpen(false);
+  };
+
+  const deleteProject = async () => {
+    if (!projectToDelete) return;
+
+    try {
+      await axios.delete(`http://localhost:3001/projects/${projectToDelete}`);
+      setProjects(projects.filter((project) => project.id !== projectToDelete));
+      closeDialog();
+    } catch (err: any) {
+      setError("Failed to delete the project. Please try again.");
+      setShowSnackbar(true);
+      closeDialog();
+    }
+  };
+
   const toggleFavourite = async (id: string, favourite: boolean) => {
     const updatedProjects = projects.map((project) =>
       project.id === id ? { ...project, favourite: !favourite } : project
@@ -58,7 +86,6 @@ export const ProjectListPage: React.FC = () => {
       setError("Failed to update favourite status. Please try again.");
       setShowSnackbar(true);
 
-      // Revert the optimistic UI update
       const revertedProjects = projects.map((project) =>
         project.id === id ? { ...project, favourite } : project
       );
@@ -66,8 +93,28 @@ export const ProjectListPage: React.FC = () => {
     }
   };
 
+  const closeDialogDelete = () => {
+    setIsDialogOpen(false);
+  };
+
   return (
     <div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginBottom: "1rem",
+        }}
+      >
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate(`/projects/new`)}
+        >
+          Create Project
+        </Button>
+      </div>
+
       <h1>Project List Page</h1>
       <Table>
         <TableHead>
@@ -77,8 +124,7 @@ export const ProjectListPage: React.FC = () => {
             <TableCell>Start Date</TableCell>
             <TableCell>End Date</TableCell>
             <TableCell>Project Manager</TableCell>
-            <TableCell>Favourite</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -89,20 +135,25 @@ export const ProjectListPage: React.FC = () => {
               <TableCell>{project.startDate}</TableCell>
               <TableCell>{project.endDate}</TableCell>
               <TableCell>{project.manager}</TableCell>
-              <TableCell>
-                <Button
-                  variant="outlined"
-                  color={project.favourite ? "error" : "success"}
+
+              <TableCell style={{ display: "flex", gap: "8px" }}>
+                <IconButton
+                  color="error"
+                  onClick={() => openDialog(project.id)}
+                >
+                  <Delete />
+                </IconButton>
+
+                <IconButton
+                  color={project.favourite ? "error" : "default"}
                   onClick={() => toggleFavourite(project.id, project.favourite)}
                 >
-                  {project.favourite ? "Remove" : "Add"}
-                </Button>
-              </TableCell>
-              <TableCell>
+                  {project.favourite ? <Favorite /> : <FavoriteBorder />}
+                </IconButton>
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => navigate(`/projects/${project.id}`)}
+                  onClick={() => navigate(`/projects/${project.id}/edit`)}
                 >
                   Edit
                 </Button>
@@ -112,19 +163,20 @@ export const ProjectListPage: React.FC = () => {
         </TableBody>
       </Table>
 
-      <Snackbar
+      <DeleteConfirmationDialog
+        open={isDialogOpen}
+        projectId={projectToDelete}
+        onConfirm={deleteProject}
+        onCancel={closeDialogDelete}
+        toggleFavouritesUpdated={toggleFavouritesUpdated}
+      />
+
+      <Notification
         open={showSnackbar}
-        autoHideDuration={6000}
+        message={error || ""}
+        type={error ? "error" : "success"}
         onClose={() => setShowSnackbar(false)}
-      >
-        <Alert
-          onClose={() => setShowSnackbar(false)}
-          severity="error"
-          sx={{ width: "100%" }}
-        >
-          {error}
-        </Alert>
-      </Snackbar>
+      />
     </div>
   );
 };
